@@ -18,11 +18,13 @@ classes = {"amenities": Amenity, "cities": City,
 
 @app_views.route("/status")
 def status_api():
+    """check the status of the api"""
     return jsonify({"status": "OK"})
 
 
 @app_views.route("/stats")
 def count_obj():
+    """retrives all the objs"""
     obj_stats = {}
     for key, value in classes.items():
         count = storage.count(value)
