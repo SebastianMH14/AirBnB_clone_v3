@@ -6,7 +6,7 @@ from models import storage
 from flask import jsonify, abort, request
 
 
-@app_views.route("/states", strict_slashes=False, methods = ["GET", "POST"])
+@app_views.route("/states", strict_slashes=False, methods=["GET", "POST"])
 def states():
     """return all the states"""
     if request.method == "GET":
@@ -17,10 +17,9 @@ def states():
         return jsonify(list_all_states)
 
     if request.method == "POST":
-        try:
-            content = request.get_json()
-        except:
+        if not request.json:
             abort(400, "Not a JSON")
+        content = request.get_json()
 
         if "name" not in content.keys():
             abort(400, "Missing name")
@@ -30,7 +29,8 @@ def states():
         return jsonify(obj.to_dict()), 201
 
 
-@app_views.route("/states/<state_id>", strict_slashes=False, methods = ["GET", "DELETE", "PUT"])
+@app_views.route("/states/<state_id>", strict_slashes=False,
+                 methods=["GET", "DELETE", "PUT"])
 def states_id(state_id):
     """return states by id"""
     if request.method == "GET":
@@ -39,7 +39,7 @@ def states_id(state_id):
             if state_id == value.id:
                 return jsonify(value.to_dict())
         abort(404)
-    
+
     if request.method == "DELETE":
         states = storage.all(State)
         for value in states.values():
@@ -53,13 +53,14 @@ def states_id(state_id):
         states = storage.all(State)
         for obj in states.values():
             if state_id == obj.id:
-                try:
-                    content = request.get_json()
-                except:
+                if not request.json:
                     abort(400, "Not a JSON")
-                
+                content = request.get_json()
+
                 for key, value in content.items():
-                    if key == 'id' or key == 'updated_at' or key == 'created_at':
+                    if key == 'id':
+                        continue
+                    if key == 'updated_at' or key == 'created_at':
                         continue
                     else:
                         setattr(obj, key, value)
