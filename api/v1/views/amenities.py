@@ -27,14 +27,16 @@ def amenities():
         obj.save()
         return jsonify(obj.to_dict()), 201
 
-@app_views.route("/amenities/<amenity_id>", strict_slashes=False, methods=["GET", "DELETE", "PUT"])
+
+@app_views.route("/amenities/<amenity_id>", strict_slashes=False,
+                 methods=["GET", "DELETE", "PUT"])
 def amenity_id(amenity_id):
     """delete, put, and get objects of amenities"""
     if request.method == "GET":
         all_amenities = storage.all(Amenity)
         for amenity in all_amenities.values():
-           if amenity_id == amenity.id:
-               return jsonify(amenity.to_dict())
+            if amenity_id == amenity.id:
+                return jsonify(amenity.to_dict())
         abort(404)
 
     if request.method == "DELETE":
@@ -53,13 +55,13 @@ def amenity_id(amenity_id):
                 if not request.json:
                     abort(400, "Not a JSON")
                 content = request.get_json()
-            for key, value in content.items():
-                if key == "id": 
-                    continue
-                elif key == 'updated_at' or key == 'created_at':
-                    continue
-                else:
-                    setattr(amenity, key, value)
-            amenity.save()
-            return jsonify(amenity.to_dict()), 200
+                for key, value in content.items():
+                    if key == "id":
+                        continue
+                    elif key == 'updated_at' or key == 'created_at':
+                        continue
+                    else:
+                        setattr(amenity, key, value)
+                amenity.save()
+                return jsonify(amenity.to_dict()), 200
         abort(404)
