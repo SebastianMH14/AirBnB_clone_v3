@@ -40,7 +40,7 @@ def places(city_id):
                         if "name" not in content.keys():
                             abort(400, "Missing name")
                         obj = Place(
-                            users_id=content["user_id"], name=content["name"],
+                            user_id=content["user_id"], name=content["name"],
                             city_id=city_id)
                         obj.save()
                         return jsonify(obj.to_dict()), 201
